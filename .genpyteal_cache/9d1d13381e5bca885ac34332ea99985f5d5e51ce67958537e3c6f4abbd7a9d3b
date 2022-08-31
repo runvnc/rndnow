@@ -1,0 +1,8 @@
+
+@Subroutine(TealType.bytes)
+def getVerifiedRandomness(hash_, vrf_proof):
+    _verified_ = VrfVerify.algorand(hash_, vrf_proof, VRF_PUB_KEY)
+    return  Seq(
+    	_verified_,
+    	Assert(_verified_.output_slots[1].load() == Int(1)),
+    	Return( Extract(_verified_.output_slots[0].load(), Int(0), Int(32)) ) )

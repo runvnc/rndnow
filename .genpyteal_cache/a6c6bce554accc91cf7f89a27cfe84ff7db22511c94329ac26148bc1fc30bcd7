@@ -1,0 +1,9 @@
+@Subroutine(uint64)
+def storeRandomness(round_, vrf_proof):
+    strRandomBytes = ScratchVar(TealType.bytes)
+    strHash = ScratchVar(TealType.bytes)
+    return  Seq(
+    	strHash.store(getRoundSeedHash(round_)),
+    	strRandomBytes.store(getVerifiedRandomness(strHash.load(), vrf_proof)),
+    	App.globalPut(Itob(round_), strRandomBytes.load()),
+    	Return( Int(1) ) )

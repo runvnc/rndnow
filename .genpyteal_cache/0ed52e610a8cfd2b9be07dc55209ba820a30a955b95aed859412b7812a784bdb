@@ -1,0 +1,5 @@
+
+@Subroutine(TealType.bytes)
+def getRoundSeedHash(round_):
+  return ( Sha512_256( Concat(Itob(round_),Concat(Block.seed(round_),Bytes(""))) ) )
+
