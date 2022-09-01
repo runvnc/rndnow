@@ -1,4 +1,6 @@
-VRF_PUB_KEY = "adfadfasdfsadfsadf"
+from libex import *
+
+VRF_PUB_KEY = "SJBLLZUWHP6FP27NK47CRZM33ANIDNPUWZIAB3ZGMPD4GEIBHKVVPXMVBQ"
 
 @bytes
 def getRoundSeedHash(round_):
@@ -12,12 +14,20 @@ def getVerifiedRandomness(hash_, vrf_proof):
   return Extract(_verified_.out[0], 0, 32)
 
 def storeRandomness(round_, vrf_proof):
-
   strHash = getRoundSeedHash(round_)
   strRandomBytes = getVerifiedRandomness(strHash, vrf_proof)
   gput(Itob(round_), strRandomBytes)
-  return 1
+
+@bytes
+def userRandom(strRound, userAddr):
+  return Sha3_256( "" + ggets(strRound) + strRound + userAddr)
 
 def app():
-  return storeRandomness(2345234544, args_[1])
+  Assert( Txn.sender == VRF_PUB_KEY )
+  strRound = args_[1]
+  strVrfProof = args_[2]
+  storeRandomness(strRound, strVrfProof)
+  print(userRandom(strRound, Txn.accounts[1]))
+  return 1
+
 

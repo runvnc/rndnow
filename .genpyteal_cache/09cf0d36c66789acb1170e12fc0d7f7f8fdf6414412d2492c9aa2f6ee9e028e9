@@ -1,4 +1,0 @@
-def app():
-  return ( storeRandomness(Int(2345234544), Txn.application_args[1]) )
-
-
