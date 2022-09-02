@@ -22,12 +22,23 @@ def storeRandomness(round_, vrf_proof):
 def userRandom(strRound, userAddr):
   return Sha3_256( "" + ggets(strRound) + strRound + userAddr)
 
-def app():
-  Assert( Txn.sender == VRF_PUB_KEY )
-  strRound = args_[1]
-  strVrfProof = args_[2]
-  storeRandomness(strRound, strVrfProof)
-  print(userRandom(strRound, Txn.accounts[1]))
-  return 1
+def creatorOnly():
+  _creator_ = AppParam.creator(0)
+  _creator_
+  Assert( Txn.sender == _creator_.value() )
+ 
 
+def app():
+  creatorOnly()
+
+  if args_[0] == 'store':
+    strRound = args_[1]
+    strVrfProof = args_[2]
+    storeRandomness(strRound, strVrfProof)
+  
+  if args_[0] == 'get':
+    strRound = args_[1]
+    print(userRandom(strRound, Txn.accounts[1]))
+
+  return 1
 

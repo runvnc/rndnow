@@ -37,15 +37,29 @@ def userRandom(strRound, userAddr):
   return ( Sha3_256( Concat(Bytes(""),Concat(ggets(strRound),Concat(strRound,userAddr)))) )
 
 
+@Subroutine(TealType.none)
+def creatorOnly():
+    _creator_ = AppParam.creator(Int(0))
+    return  Seq(
+    	_creator_,
+    	Assert( Txn.sender() == _creator_.value() ) )
+
 def app():
     strVrfProof = ScratchVar(TealType.bytes)
     strRound = ScratchVar(TealType.bytes)
     return  Seq(
-    	Assert( Txn.sender() == VRF_PUB_KEY ),
-    	strRound.store(Txn.application_args[1]),
-    	strVrfProof.store(Txn.application_args[2]),
-    	storeRandomness(strRound.load(), strVrfProof.load()),
-    	Log(userRandom(strRound.load(), Txn.accounts[1])),
+    	creatorOnly(),
+    	If( Txn.application_args[0] == Bytes('store'), 
+            Seq(
+    	       strRound.store(Txn.application_args[1]),
+    	       strVrfProof.store(Txn.application_args[2]),
+    	       storeRandomness(strRound.load(), strVrfProof.load()) )
+       ),
+    	If( Txn.application_args[0] == Bytes('get'), 
+            Seq(
+    	       strRound.store(Txn.application_args[1]),
+    	       Log(userRandom(strRound.load(), Txn.accounts[1])) )
+       ),
     	Return( Int(1) ) )
 
 

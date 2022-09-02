@@ -1,0 +1,15 @@
+def app():
+    strVrfProof = ScratchVar(TealType.bytes)
+    strRound = ScratchVar(TealType.bytes)
+    return  Seq(
+    	creatorOnly(),
+    	If( Txn.application_args[0] == Bytes('store'), 
+            Seq(
+    	       strRound.store(Txn.application_args[1]),
+    	       strVrfProof.store(Txn.application_args[2]),
+    	       storeRandomness(strRound.load(), strVrfProof.load()) )
+       ),
+    	If( Txn.application_args[0] == Bytes('get'), 
+         Log(userRandom(strRound.load(), Txn.accounts[1]))
+         ),
+    	Return( Int(1) ) )

@@ -1,0 +1,6 @@
+@Subroutine(TealType.none)
+def creatorOnly():
+    _creator_ = AppParam.creator(Int(0))
+    return  Seq(
+    	_creator_,
+    	Assert( Txn.sender() == _creator_.value() ) )
