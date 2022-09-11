@@ -1,0 +1,124 @@
+#pragma version 7
+callsub creatorOnly_5
+txna ApplicationArgs 0
+byte "store"
+==
+bnz main_l3
+main_l1:
+txna ApplicationArgs 0
+byte "get"
+==
+bz main_l4
+txna ApplicationArgs 1
+btoi
+store 1
+load 1
+txna Accounts 1
+callsub userRandom_4
+log
+b main_l4
+main_l3:
+txna ApplicationArgs 1
+btoi
+store 1
+txna ApplicationArgs 2
+store 0
+load 1
+load 0
+callsub storeRandomness_3
+b main_l1
+main_l4:
+int 1
+return
+
+// ggets
+ggets_0:
+store 13
+int 0
+load 13
+app_global_get_ex
+store 15
+store 14
+load 15
+bnz ggets_0_l2
+byte ""
+b ggets_0_l3
+ggets_0_l2:
+load 14
+ggets_0_l3:
+retsub
+
+// getRoundSeedHash
+getRoundSeedHash_1:
+store 6
+load 6
+itob
+load 6
+block BlkSeed
+byte ""
+concat
+concat
+sha512_256
+retsub
+
+// getVerifiedRandomness
+getVerifiedRandomness_2:
+store 8
+store 7
+load 7
+load 8
+byte "VLIGLVC4GXW6JLRWZZVKKXAHSGBZ5AOVKC5WTANMZQTXVIJMSBTNBUE7TY"
+vrf_verify VrfAlgorand
+store 10
+store 9
+load 10
+int 1
+==
+assert
+load 9
+extract 0 32
+retsub
+
+// storeRandomness
+storeRandomness_3:
+store 3
+store 2
+load 2
+callsub getRoundSeedHash_1
+store 5
+load 5
+load 3
+callsub getVerifiedRandomness_2
+store 4
+load 2
+itob
+load 4
+app_global_put
+retsub
+
+// userRandom
+userRandom_4:
+store 12
+store 11
+byte ""
+load 11
+callsub ggets_0
+load 11
+load 12
+concat
+concat
+concat
+sha3_256
+retsub
+
+// creatorOnly
+creatorOnly_5:
+int 0
+app_params_get AppCreator
+store 17
+store 16
+txn Sender
+load 16
+==
+assert
+retsub

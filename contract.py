@@ -1,6 +1,6 @@
 from libex import *
 
-VRF_PUB_KEY = "SJBLLZUWHP6FP27NK47CRZM33ANIDNPUWZIAB3ZGMPD4GEIBHKVVPXMVBQ"
+VRF_PUB_KEY = "VLIGLVC4GXW6JLRWZZVKKXAHSGBZ5AOVKC5WTANMZQTXVIJMSBTNBUE7TY"
 
 @bytes
 def getRoundSeedHash(round_):
@@ -26,19 +26,18 @@ def creatorOnly():
   _creator_ = AppParam.creator(0)
   _creator_
   Assert( Txn.sender == _creator_.value() )
- 
 
 def app():
   creatorOnly()
 
   if args_[0] == 'store':
-    strRound = args_[1]
+    round_ = Btoi(args_[1])
     strVrfProof = args_[2]
-    storeRandomness(strRound, strVrfProof)
+    storeRandomness(round_, strVrfProof)
   
   if args_[0] == 'get':
-    strRound = args_[1]
-    print(userRandom(strRound, Txn.accounts[1]))
+    round_ = Btoi(args_[1])
+    print(userRandom(round_, Txn.accounts[1]))
 
   return 1
 
