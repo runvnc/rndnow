@@ -1,5 +1,9 @@
 from pyteal import *
 
+def ensure_budget(ops):
+  opup = OpUp(OpUpMode.OnCall)
+  return Seq(opup.ensure_budget(ops))
+
 def asset_bal(addr, asset_index):
   b = AssetHolding.balance(addr, Txn.assets[asset_index])
   return Seq(

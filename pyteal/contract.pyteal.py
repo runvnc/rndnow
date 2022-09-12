@@ -6,6 +6,7 @@ from libex import *
 VRF_PUB_KEY = Bytes("VLIGLVC4GXW6JLRWZZVKKXAHSGBZ5AOVKC5WTANMZQTXVIJMSBTNBUE7TY")
 
 
+
 @Subroutine(TealType.bytes)
 def getRoundSeedHash(round_):
   return ( Sha512_256( Concat(Itob(round_),Concat(Block.seed(round_),Bytes(""))) ) )
@@ -51,6 +52,7 @@ def app():
             Seq(
     	       round_.store(Btoi(Txn.application_args[1])),
     	       strVrfProof.store(Txn.application_args[2]),
+    	       ensure_budget(Int(7000)),
     	       storeRandomness(round_.load(), strVrfProof.load()) )
        ),
     	If( Txn.application_args[0] == Bytes('get'), 
