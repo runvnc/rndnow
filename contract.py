@@ -17,11 +17,13 @@ def getVerifiedRandomness(hash_, vrf_proof):
 def storeRandomness(round_, vrf_proof):
   strHash = getRoundSeedHash(round_)
   strRandomBytes = getVerifiedRandomness(strHash, vrf_proof)
+  gput('round', Itob(round_))
   gput('randbytes', strRandomBytes)
   #gput(Itob(round_), strRandomBytes)
 
 @bytes
-def userRandom(strRound, userAddr):
+def userRandom(userAddr):
+  strRound = ggets('round')
   return Sha3_256( "" + ggets('randbytes') + strRound + userAddr)
 
 def creatorOnly():
@@ -39,9 +41,9 @@ def app():
     storeRandomness(round_, strVrfProof)
   
   if args_[0] == 'get':
-    round_ = Btoi(args_[1])
-    strAddress = args_[2]
-    print(userRandom(round_, strAddress))
+    #round_ = Btoi(args_[1])
+    strAddress = args_[1]
+    print(userRandom(strAddress))
 
   return 1
 

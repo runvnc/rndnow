@@ -1,0 +1,7 @@
+
+@Subroutine(TealType.bytes)
+def userRandom(userAddr):
+    strRound = ScratchVar(TealType.bytes)
+    return  Seq(
+    	strRound.store(ggets(Bytes('round'))),
+    	Return( Sha3_256( Concat(Bytes(""),Concat(ggets(Bytes('randbytes')),Concat(strRound.load(),userAddr)))) ) )

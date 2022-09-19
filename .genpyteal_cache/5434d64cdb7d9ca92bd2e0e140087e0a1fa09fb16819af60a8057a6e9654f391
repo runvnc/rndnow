@@ -1,0 +1,5 @@
+
+@Subroutine(TealType.bytes)
+def userRandom(userAddr):
+  return ( Sha3_256( Concat(Bytes(""),ggets(Bytes('randbytes')) + ggets(Bytes('round')) + userAddr)) )
+
