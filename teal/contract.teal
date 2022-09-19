@@ -11,29 +11,31 @@ byte "get"
 bz main_l7
 txna ApplicationArgs 1
 btoi
-store 1
-load 1
-txna Accounts 1
+store 2
+txna ApplicationArgs 2
+store 0
+load 2
+load 0
 callsub userRandom_4
 log
 b main_l7
 main_l3:
 txna ApplicationArgs 1
 btoi
-store 1
+store 2
 txna ApplicationArgs 2
-store 0
+store 1
 int 7000
 int 10
 +
-store 2
+store 3
 main_l4:
-load 2
+load 3
 global OpcodeBudget
 >
 bnz main_l6
+load 2
 load 1
-load 0
 callsub storeRandomness_3
 b main_l1
 main_l6:
@@ -54,27 +56,27 @@ return
 
 // ggets
 ggets_0:
-store 14
-int 0
-load 14
-app_global_get_ex
-store 16
 store 15
-load 16
+int 0
+load 15
+app_global_get_ex
+store 17
+store 16
+load 17
 bnz ggets_0_l2
 byte ""
 b ggets_0_l3
 ggets_0_l2:
-load 15
+load 16
 ggets_0_l3:
 retsub
 
 // getRoundSeedHash
 getRoundSeedHash_1:
-store 7
-load 7
+store 8
+load 8
 itob
-load 7
+load 8
 block BlkSeed
 byte ""
 concat
@@ -84,48 +86,47 @@ retsub
 
 // getVerifiedRandomness
 getVerifiedRandomness_2:
-store 9
-store 8
-load 8
-load 9
-byte "VLIGLVC4GXW6JLRWZZVKKXAHSGBZ5AOVKC5WTANMZQTXVIJMSBTNBUE7TY"
-vrf_verify VrfAlgorand
-store 11
 store 10
-load 11
+store 9
+load 9
+load 10
+addr VLIGLVC4GXW6JLRWZZVKKXAHSGBZ5AOVKC5WTANMZQTXVIJMSBTNBUE7TY
+vrf_verify VrfAlgorand
+store 12
+store 11
+load 12
 int 1
 ==
 assert
-load 10
+load 11
 extract 0 32
 retsub
 
 // storeRandomness
 storeRandomness_3:
-store 4
-store 3
-load 3
-callsub getRoundSeedHash_1
-store 6
-load 6
-load 4
-callsub getVerifiedRandomness_2
 store 5
-load 3
-itob
+store 4
+load 4
+callsub getRoundSeedHash_1
+store 7
+load 7
 load 5
+callsub getVerifiedRandomness_2
+store 6
+byte "randbytes"
+load 6
 app_global_put
 retsub
 
 // userRandom
 userRandom_4:
+store 14
 store 13
-store 12
 byte ""
-load 12
+byte "randbytes"
 callsub ggets_0
-load 12
 load 13
+load 14
 concat
 concat
 concat
@@ -136,10 +137,6 @@ retsub
 creatorOnly_5:
 int 0
 app_params_get AppCreator
+store 19
 store 18
-store 17
-txn Sender
-load 17
-==
-assert
 retsub

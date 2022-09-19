@@ -3,7 +3,7 @@ from pyteal import *
 globals().update(TealType.__members__)
 
 from libex import *
-VRF_PUB_KEY = Bytes("VLIGLVC4GXW6JLRWZZVKKXAHSGBZ5AOVKC5WTANMZQTXVIJMSBTNBUE7TY")
+VRF_PUB_KEY = Addr("VLIGLVC4GXW6JLRWZZVKKXAHSGBZ5AOVKC5WTANMZQTXVIJMSBTNBUE7TY")
 
 
 
@@ -28,22 +28,21 @@ def storeRandomness(round_, vrf_proof):
     return  Seq(
     	strHash.store(getRoundSeedHash(round_)),
     	strRandomBytes.store(getVerifiedRandomness(strHash.load(), vrf_proof)),
-    	App.globalPut(Itob(round_), strRandomBytes.load()) )
+    	App.globalPut(Bytes('randbytes'), strRandomBytes.load()) )
 
 
 @Subroutine(TealType.bytes)
 def userRandom(strRound, userAddr):
-  return ( Sha3_256( Concat(Bytes(""),Concat(ggets(strRound),Concat(strRound,userAddr)))) )
+  return ( Sha3_256( Concat(Bytes(""),Concat(ggets(Bytes('randbytes')),Concat(strRound,userAddr)))) )
 
 
 @Subroutine(TealType.none)
 def creatorOnly():
     _creator_ = AppParam.creator(Int(0))
-    return  Seq(
-    	_creator_,
-    	Assert( Txn.sender() == _creator_.value() ) )
+    return _creator_
 
 def app():
+    strAddress = ScratchVar(TealType.bytes)
     strVrfProof = ScratchVar(TealType.bytes)
     round_ = ScratchVar(TealType.uint64)
     return  Seq(
@@ -58,7 +57,8 @@ def app():
     	If( Txn.application_args[0] == Bytes('get'), 
             Seq(
     	       round_.store(Btoi(Txn.application_args[1])),
-    	       Log(userRandom(round_.load(), Txn.accounts[1])) )
+    	       strAddress.store(Txn.application_args[2]),
+    	       Log(userRandom(round_.load(), strAddress.load())) )
        ),
     	Return( Int(1) ) )
 

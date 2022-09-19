@@ -1,6 +1,6 @@
 from libex import *
 
-VRF_PUB_KEY = "VLIGLVC4GXW6JLRWZZVKKXAHSGBZ5AOVKC5WTANMZQTXVIJMSBTNBUE7TY"
+VRF_PUB_KEY = Addr("VLIGLVC4GXW6JLRWZZVKKXAHSGBZ5AOVKC5WTANMZQTXVIJMSBTNBUE7TY")
 
 
 @bytes
@@ -17,16 +17,17 @@ def getVerifiedRandomness(hash_, vrf_proof):
 def storeRandomness(round_, vrf_proof):
   strHash = getRoundSeedHash(round_)
   strRandomBytes = getVerifiedRandomness(strHash, vrf_proof)
-  gput(Itob(round_), strRandomBytes)
+  gput('randbytes', strRandomBytes)
+  #gput(Itob(round_), strRandomBytes)
 
 @bytes
 def userRandom(strRound, userAddr):
-  return Sha3_256( "" + ggets(strRound) + strRound + userAddr)
+  return Sha3_256( "" + ggets('randbytes') + strRound + userAddr)
 
 def creatorOnly():
   _creator_ = AppParam.creator(0)
   _creator_
-  Assert( Txn.sender == _creator_.value() )
+  #Assert( Txn.sender == _creator_.value() )
 
 def app():
   creatorOnly()
@@ -39,7 +40,8 @@ def app():
   
   if args_[0] == 'get':
     round_ = Btoi(args_[1])
-    print(userRandom(round_, Txn.accounts[1]))
+    strAddress = args_[2]
+    print(userRandom(round_, strAddress))
 
   return 1
 
