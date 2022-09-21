@@ -3,19 +3,30 @@ callsub creatorOnly_5
 txna ApplicationArgs 0
 byte "store"
 ==
-bnz main_l3
+bnz main_l5
 main_l1:
 txna ApplicationArgs 0
 byte "get"
 ==
-bz main_l7
+bnz main_l4
+main_l2:
+txna ApplicationArgs 0
+byte "clear"
+==
+bz main_l9
+byte "round"
+app_global_del
+byte "randbytes"
+app_global_del
+b main_l9
+main_l4:
 txna ApplicationArgs 1
 store 0
 load 0
 callsub userRandom_4
 log
-b main_l7
-main_l3:
+b main_l2
+main_l5:
 txna ApplicationArgs 1
 btoi
 store 2
@@ -25,16 +36,16 @@ int 7000
 int 10
 +
 store 3
-main_l4:
+main_l6:
 load 3
 global OpcodeBudget
 >
-bnz main_l6
+bnz main_l8
 load 2
 load 1
 callsub storeRandomness_3
 b main_l1
-main_l6:
+main_l8:
 itxn_begin
 int appl
 itxn_field TypeEnum
@@ -45,8 +56,8 @@ itxn_field ApprovalProgram
 byte 0x068101
 itxn_field ClearStateProgram
 itxn_submit
-b main_l4
-main_l7:
+b main_l6
+main_l9:
 int 1
 return
 

@@ -45,5 +45,9 @@ def app():
     strAddress = args_[1]
     print(userRandom(strAddress))
 
+  if args_[0] == 'clear':
+    App.globalDel('round')
+    App.globalDel('randbytes')
+
   return 1
 

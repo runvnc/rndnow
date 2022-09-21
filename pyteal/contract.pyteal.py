@@ -62,6 +62,11 @@ def app():
     	       strAddress.store(Txn.application_args[1]),
     	       Log(userRandom(strAddress.load())) )
        ),
+    	If( Txn.application_args[0] == Bytes('clear'), 
+            Seq(
+    	       App.globalDel(Bytes('round')),
+    	       App.globalDel(Bytes('randbytes')) )
+       ),
     	Return( Int(1) ) )
 
 
