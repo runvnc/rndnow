@@ -22,8 +22,9 @@ def storeRandomness(round_, vrf_proof):
   #gput(Itob(round_), strRandomBytes)
 
 @bytes
-def userRandom(userAddr):
+def userRandom(userAddr, round_):
   strRound = ggets('round')
+  Assert(round_ == Btoi(strRound))
   return Sha3_256( "" + ggets('randbytes') + strRound + userAddr)
 
 def creatorOnly():
@@ -43,7 +44,7 @@ def app():
   if args_[0] == 'get':
     #round_ = Btoi(args_[1])
     strAddress = args_[1]
-    print(userRandom(strAddress))
+    print(userRandom(strAddress, Btoi(args_[2])))
 
   if args_[0] == 'clear':
     App.globalDel('round')

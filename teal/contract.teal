@@ -23,6 +23,8 @@ main_l4:
 txna ApplicationArgs 1
 store 0
 load 0
+txna ApplicationArgs 2
+btoi
 callsub userRandom_4
 log
 b main_l2
@@ -63,18 +65,18 @@ return
 
 // ggets
 ggets_0:
-store 15
-int 0
-load 15
-app_global_get_ex
-store 17
 store 16
-load 17
+int 0
+load 16
+app_global_get_ex
+store 18
+store 17
+load 18
 bnz ggets_0_l2
 byte ""
 b ggets_0_l3
 ggets_0_l2:
-load 16
+load 17
 ggets_0_l3:
 retsub
 
@@ -131,14 +133,20 @@ retsub
 
 // userRandom
 userRandom_4:
+store 14
 store 13
 byte "round"
 callsub ggets_0
-store 14
+store 15
+load 14
+load 15
+btoi
+==
+assert
 byte ""
 byte "randbytes"
 callsub ggets_0
-load 14
+load 15
 load 13
 concat
 concat
@@ -150,6 +158,6 @@ retsub
 creatorOnly_5:
 int 0
 app_params_get AppCreator
+store 20
 store 19
-store 18
 retsub

@@ -33,10 +33,11 @@ def storeRandomness(round_, vrf_proof):
 
 
 @Subroutine(TealType.bytes)
-def userRandom(userAddr):
+def userRandom(userAddr, round_):
     strRound = ScratchVar(TealType.bytes)
     return  Seq(
     	strRound.store(ggets(Bytes('round'))),
+    	Assert(round_ == Btoi(strRound.load())),
     	Return( Sha3_256( Concat(Bytes(""),Concat(ggets(Bytes('randbytes')),Concat(strRound.load(),userAddr)))) ) )
 
 @Subroutine(TealType.none)
@@ -60,7 +61,7 @@ def app():
     	If( Txn.application_args[0] == Bytes('get'), 
             Seq(
     	       strAddress.store(Txn.application_args[1]),
-    	       Log(userRandom(strAddress.load())) )
+    	       Log(userRandom(strAddress.load(), Btoi(Txn.application_args[2]))) )
        ),
     	If( Txn.application_args[0] == Bytes('clear'), 
             Seq(
